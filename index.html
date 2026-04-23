@@ -1,11 +1,193 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <title>Test GitHub Pages</title>
+  <meta charset="UTF-8" />
+  <title>Nákupní seznam</title>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f6f7f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    .category {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+    .items {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: .5rem;
+      margin-bottom: .5rem;
+    }
+    label {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+      cursor: pointer;
+    }
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      padding: .5rem;
+      resize: vertical;
+    }
+    button {
+      width: 100%;
+      padding: .75rem;
+      font-size: 1.1rem;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #9ca3af;
+    }
+    .footer {
+      text-align: center;
+      font-size: .85rem;
+      color: #666;
+      margin-top: 2rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>✅ GitHub Pages fungují</h1>
-  <p>Pokud tohle vidíš, hosting běží.</p>
+
+<div id="app">
+  <h1>🛒 Nákupní seznam</h1>
+
+  <div
+    v-for="cat in categories"
+    :key="cat.key"
+    class="category"
+  >
+    <h2>{{ cat.title }}</h2>
+
+    <div class="items">
+      <label v-for="item in cat.items" :key="item">
+        <input
+          type="checkbox"
+          :value="item"
+          v-model="form[cat.key].items"
+        />
+        {{ item }}
+      </label>
+    </div>
+
+    <textarea
+      v-model="form[cat.key].note"
+      :placeholder="'Poznámka k ' + cat.title.toLowerCase()"
+    ></textarea>
+  </div>
+
+  <div class="category">
+    <h2>📝 Něco dalšího?</h2>
+    <textarea v-model="extra"></textarea>
+  </div>
+
+  <button @click="submit">
+    ✅ Odeslat seznam
+  </button>
+
+  <div class="footer">
+    GitHub Pages · Vue.js · Google Apps Script
+  </div>
+</div>
+
+<script>
+const { createApp, ref } = Vue
+
+/* ===========================
+   KONFIGURACE KATEGORIÍ
+   =========================== */
+
+const CATEGORIES = [
+  {
+    key: 'ovoce',
+    title: 'Ovoce',
+    items: [
+      '🥑 Avokádo','🍎 Červená jablka','🍏 Zelená jablka','🍐 Hrušky',
+      '🍌 Banány','🍊 Pomeranče','🍊 Mandarinky','🍊 Grepy',
+      '🍋 Citrony','🍓 Jahody','🫐 Borůvky','🍉 Meloun',
+      '🍑 Broskev','🍒 Třešně','🍍 Ananas','🥝 Kiwi','🥭 Mango'
+    ]
+  },
+  {
+    key: 'zelenina',
+    title: 'Zelenina',
+    items: [
+      '🥔 Brambory','🧅 Cibule','🧄 Česnek','🍅 Rajčata','🥕 Mrkev',
+      '🥒 Okurka','🫑 Papriky','🥬 Salát','🥒 Cuketa',
+      '🥬 Kedlubna','🌶️ Ředkvičky','🍆 Lilek','🫚 Zázvor',
+      '🍄 Žampiony','🍄‍🟫 Hlíva'
+    ]
+  },
+  {
+    key: 'pecivo',
+    title: 'Pečivo',
+    items: [
+      '🥐 Rohlíky','🍞 Chléb konzumní','🍞 Chléb řemeslný',
+      '🍞 Toastový chléb','🥖 Bageta','🥐 Sladké pečivo',
+      '🥮 Vánočka','🥮 Mazanec'
+    ]
+  }
+  // ✅ DALŠÍ SEKCE PŘIDÁŠ JEN DALŠÍM OBJEKTEM
+]
+
+/* ===========================
+   APLIKACE
+   =========================== */
+
+const initForm = (categories) => {
+  const obj = {}
+  categories.forEach(c => {
+    obj[c.key] = { items: [], note: '' }
+  })
+  return obj
+}
+
+createApp({
+  setup() {
+    const categories = CATEGORIES
+    const form = ref(initForm(categories))
+    const extra = ref('')
+
+    const submit = async () => {
+      const payload = {
+        categories: form.value,
+        extra: extra.value
+      }
+
+      console.log('ODESÍLANÁ DATA:', payload)
+
+      alert('Formulář funguje ✅\nData jsou v konzoli.')
+      
+      // 🔜 TADY POZDĚJI:
+      // await fetch('APPS_SCRIPT_URL', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(payload)
+      // })
+    }
+
+    return { categories, form, extra, submit }
+  }
+}).mount('#app')
+</script>
+
 </body>
 </html>
