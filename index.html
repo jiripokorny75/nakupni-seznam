@@ -176,12 +176,13 @@ createApp({
 
       alert('Formulář funguje ✅\nData jsou v konzoli.')
       
-      // 🔜 TADY POZDĚJI:
-      // await fetch('APPS_SCRIPT_URL', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(payload)
-      // })
+// 🔜 TADY přenos do spredsheet:
+await fetch('NOVE_APPS_SCRIPT_URL', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload)
+})
+      
     }
 
     return { categories, form, extra, submit }
